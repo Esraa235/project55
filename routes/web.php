@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
+// use App\Http\Controllers\Admin\
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +14,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::middleware(['auth'])->group(function(){
+//     Route::resource('students');
+//     Route::resource('projects');
+//     Route::resource('');
+Route::get('/settings/password',[AuthController::class,'showChangePassword'])->name('change-password');
+Route::put('/settings/password',[AuthController::class,'updatePassword'])->name('update-password');
+
+Route::get('logout',[AuthController::class,'logout'])->name('logout');
+});
+Route::middleware(['guest'])->group(function(){
+
+    Route::get('login',[AuthController::class,'showLoginForm'])->name('login');
+    Route::post('login',[AuthController::class,'login']) ;
 });
