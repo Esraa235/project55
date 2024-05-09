@@ -19,22 +19,22 @@ class AuthController extends Controller
      {
          $credentials= $request->validate([
         'email' => 'required|email',
-        'password' => 'required|min:6',
+        'password' => 'required',
       ]);
       if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
 
-        return redirect()->route('app');
+        return redirect()->route('projects.index');
       }
       return back()->withErrors(['email' => 'Invalids']);
     } 
 
-    //show the form to change the user's name and email
+    // show the form to change the user's name and email
 
-    // public function showChangedInfoForm()
-    // {
-    //   return view ('auth.settings.info');
-    // }
+    public function showChangeInfoForm()
+    {
+      return view ('auth.settings.info');
+    }
 
     //update user's name and email
     
@@ -42,30 +42,31 @@ class AuthController extends Controller
 
     // the form to change the user's password
 
-  //   public function showChangePasswordForm()
-  //   {
-  //     return view('auth.settings.password');
-  //   }
+    public function showChangePasswordForm()
+    {
+      return view('auth.settings.password');
+    }
 
   //   //update the user's password
-  //   public function updatePassword(Request $request)
-  //   {
-  //     $this->validate($request,[
-  //       'current_password'=> 'required|sering',
-  //       'password'=>'required|string|min:8|confirmed',
-  //     ]);
-  //     $admin->auth()->admin();
-
-
-  //    if(!Hash::check($request->input('current_password'),$user_password)){
-  //     return redirect()->back()->withErrors(['current_password'=>'current password invalid']);
-  //    } 
-  //   $admin->update([
-  //     'password'=>Hash::make($request->input('passowrd')),
-  //   ]);
-  //   return redirect()->back()->with('success','password updated successfuly');
+    public function updatePassword(Request $request)
+    {
+      $this->validate($request,[
+        'current_password'=> 'required|string',
+        'password'=>'required|string|min:8|confirmed',
+      ]);
+      $admin->auth()->user();
+    
   
-  // } 
+     if(!Hash::check($request->input('current_password'),$user_password))
+     {
+      return redirect()->back()->withErrors(['current_password'=>'current password invalid']);
+     } 
+    $admin->update([
+      'password'=>Hash::make($request->input('passowrd')),
+    ]);
+    return redirect()->back()->with('success','password updated successfuly');
+  
+  } 
 
      //logout
       
@@ -75,4 +76,5 @@ class AuthController extends Controller
       $request->session()->regenerateToken();
       return redirect('/');
     }
-}
+
+  }

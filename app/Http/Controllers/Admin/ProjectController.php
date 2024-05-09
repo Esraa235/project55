@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        $projects =Projects::all();
+        return view('projects.index',compact('projects'));
     }
 
     /**
@@ -20,7 +22,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('projects.index');
     }
 
     /**
@@ -28,7 +30,24 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string',
+            // 'year_id' => 'required',
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif',
+            'details' => 'required|string',
+            'summary' => 'required |string',
+            'professor' => 'required|string',
+        ]);
+        $imagePath=$request->file('image')->store('public/project_images');
+
+        Project::create([
+           'name'=>$request->input('name'),
+           'image'=>$imagePath,
+           'details'=>$request->input('details'),
+           'summary'=>$request->input('summary'),
+           'professor'=>$request->input('professor'),
+        ]);
+        return redirect()->route('projects.index')->with('success','Project created successfully');
     }
 
     /**
@@ -36,7 +55,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return view('projects.show',compact('projects'));
     }
 
     /**
@@ -44,7 +63,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return view('projects.edit',compact('projects'));
     }
 
     /**
@@ -52,7 +71,26 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif',
+            'details' => 'required|string',
+            'summary' => 'required |string',
+            'professor' => 'required|string',
+        ]);
+
+        if($request->hasFile('image')){
+            $imagePath = $request->file('image')->store('public/project_images');
+            $project->update(['image'=> $imagePath]);
+      }
+      $project->update([
+        'name'=>$request->input('name'),
+        'details'=>$request->input('details'),
+        'summary'=>$request->input('summary'),
+        'professor'=>$request->input('professor'),
+      ]);
+      return redirect()->route('projects.index')->with('success','Project updated successfully');
     }
 
     /**
@@ -60,6 +98,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        
+        $project->delete();
+        return redirect()->route('projects.index')->with('success','Project deleted successfully');
     }
 }

@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 @section('content')
 
- <div>
+ <div class="container-fluid">
     <h2 class="my-4">Projects</h2>
     <a href="{{ route('projects.create')}}" class="btn btn-primary mb-3">Add Project</a>
 
@@ -9,37 +9,33 @@
     <div class="alert alert-success">{{session('success') }}</div>
     @endif
 
-    <table class="table">
-        <thead>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
           <tr>
-            <th scope="col">name</th>
-            <th scope="col">tags</th>
-            <th scope="col">students</th>
-            <th scope="col">professor</th>
+            <th >name</th>
+            <!-- <th >tags</th> -->
+            <th >students</th>
+            <th >professor</th>
+            <th >actions</th>
           </tr>
         </thead>
         <tbody>
             @foreach($categories as $category)
           <tr>
             <th> {{ $project->name}}</th>
-            <td> {{ $project->tags}}</td>
+            <!-- <td> {{ $project->tags}}</td> -->
             <td> {{ $project->students}}</td>
             <td> {{ $project->professor}}</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
             <td>
-                <a href="{{route('categories.show'.$category->id)}}" class="btn btn btn-primary"></a>
-                <a href="{{route('categories.show'.$category->id)}}" class="btn btn btn btn-warning"></a>
-                <!-- <form action="{{ route('')}}"></form> -->
+                <a href="{{route('projects.show'.$project->id)}}" class="btn btn btn-info btn-sm">View</a>
+                <a href="{{route('projects.edit'.$project->id)}}" class="btn btn btn btn-primary btn-sm">Edit</a>
+                <form action="{{ route('projects.destroy',$$project->id)}}" method="POST"
+                 style="display:inline;" >
+                @csrf
+                @method('DELETE')
+                <button type-"submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('Are you sure you want to delete this project')">Delete</button>
+                </form>
             </td>
           </tr>
           @endforeach
